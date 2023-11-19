@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:todo_firebase/core/firebase/firebase_auth_service.dart';
 import 'package:todo_firebase/core/firebase/firebase_service.dart';
 import 'package:todo_firebase/models/todo_list_state.dart';
 
@@ -9,11 +10,13 @@ part 'todo_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 class TodoNotifier extends _$TodoNotifier {
-  late final FirebaseService _apiService;
+  late final FirebaseApiService _apiService;
+  late final FirebaseAuthService _authService;
 
   @override
   TodoListState build() {
     _apiService = ref.read(firebaseServiceProvider);
+    _authService = ref.read(firebaseAuthService);
     return TodoListState();
   }
 
@@ -24,7 +27,7 @@ class TodoNotifier extends _$TodoNotifier {
       createdAt: DateTime.now().toIso8601String(),
       updatedAt: DateTime.now().toIso8601String(),
       completed: false,
-      userId: '1',
+      userId: _authService.currentUser!.uid,
     );
 
     state = state.copyWith(todos: [...state.todos, todo]);
@@ -55,28 +58,41 @@ class TodoNotifier extends _$TodoNotifier {
 
   void toggle(Todo todo) {
     final index = state.todos.indexOf(todo);
-    final newTodos = [...state.todos];
-    newTodos[index] = todo.copyWith(completed: !todo.completed);
-    state = state.copyWith(todos: newTodos);
+    final updatedTodo = todo.copyWith(completed: !todo.completed);
+
+    state = state.copyWith(
+      todos: [
+        for (var i = 0; i < state.todos.length; i++)
+          if (i == index) updatedTodo else state.todos[i]
+      ],
+    );
+
+    try {
+      _apiService.updateTodo(updatedTodo);
+    } catch (e) {
+      if (e is FirebaseException) {
+        final index = state.todos.indexOf(updatedTodo);
+        if (index != -1) {
+          final newTodos = [...state.todos];
+          newTodos.removeAt(index);
+          state = state.copyWith(todos: newTodos);
+        }
+      }
+      rethrow;
+    }
   }
 
-  void getAllTodo() {
-    state = state.copyWith(todos: todos);
+  Future<void> getAllTodo() async {
+    try {
+      final userId = _authService.currentUser!.uid;
+      final todos = await _apiService.getTodos(userId);
+      state = state.copyWith(todos: todos);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  void clear() {
+    state = TodoListState();
   }
 }
-
-final todos = [
-  Todo(title: 'Buy milk', id: '1', createdAt: '2021-08-01T12:00:00.000Z'),
-  Todo(
-      title: 'Buy eggs',
-      completed: true,
-      id: '2',
-      createdAt: '2021-08-02T12:00:00.000Z'),
-  Todo(title: 'Buy bread', id: '3', createdAt: '2021-08-03T12:00:00.000Z'),
-  Todo(
-      title: 'Buy water',
-      completed: true,
-      id: '4',
-      createdAt: '2021-08-04T12:00:00.000Z'),
-  Todo(title: 'Buy butter', id: '5', createdAt: '2021-08-05T12:00:00.000Z'),
-];

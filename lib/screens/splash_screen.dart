@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo_firebase/providers/todo_provider.dart';
 import 'package:todo_firebase/screens/home/home_screen.dart';
+import 'package:todo_firebase/screens/login/sign_up_screen.dart';
 import 'package:todo_firebase/utils/extensions.dart';
+
+import '../providers/auth_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -29,12 +32,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     animationController.forward();
     animationController.addStatusListener(_animationListener);
 
-    // if logged in
-    Future.delayed(Duration.zero, _getAllTodos);
+    if (_isLoggedIn()) Future.delayed(Duration.zero, _getAllTodos);
   }
 
   void _getAllTodos() async {
     ref.read(todoNotifierProvider.notifier).getAllTodo();
+  }
+
+  bool _isLoggedIn() {
+    return ref.read(authNotifierProvider.notifier).isLoggedIn();
   }
 
   void _animationListener(AnimationStatus status) {
@@ -42,6 +48,21 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 
   void _goToNextScreen() {
+    if (_isLoggedIn()) {
+      _goToHomeScreen();
+    } else {
+      _goToLoginScreen();
+    }
+  }
+
+  void _goToLoginScreen() {
+    context.appNavigator.goToReplacement(
+      const SignUpScreen(),
+      routeName: context.routes.login,
+    );
+  }
+
+  void _goToHomeScreen() {
     context.appNavigator.goToReplacement(
       const HomeScreen(),
       routeName: context.routes.home,

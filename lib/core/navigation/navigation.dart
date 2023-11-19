@@ -36,4 +36,17 @@ class AppNavigator {
       ),
     );
   }
+
+  void goToAndRemoveUntil(Widget route, {Object? data, String? routeName}) {
+    _navigator.pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => route,
+        settings: RouteSettings(
+          name: routeName,
+          arguments: data,
+        ),
+      ),
+      (route) => false,
+    );
+  }
 }
