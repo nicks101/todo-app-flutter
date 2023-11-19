@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:todo_firebase/providers/todo_provider.dart';
 import 'package:todo_firebase/screens/home/home_screen.dart';
 import 'package:todo_firebase/utils/extensions.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final animationController = AnimationController(
     vsync: this,
@@ -26,6 +28,13 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     animationController.forward();
     animationController.addStatusListener(_animationListener);
+
+    // if logged in
+    Future.delayed(Duration.zero, _getAllTodos);
+  }
+
+  void _getAllTodos() async {
+    ref.read(todoNotifierProvider.notifier).getAllTodo();
   }
 
   void _animationListener(AnimationStatus status) {

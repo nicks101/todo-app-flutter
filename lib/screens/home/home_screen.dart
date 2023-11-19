@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_firebase/screens/home/add_todo.dart';
 import 'package:todo_firebase/screens/home/todo_list.dart';
 import 'package:todo_firebase/screens/profile/profile_screen.dart';
 import 'package:todo_firebase/utils/extensions.dart';
@@ -33,6 +34,7 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: const TodoList(),
+      bottomNavigationBar: const AddTodo(),
     );
   }
 }

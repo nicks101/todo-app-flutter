@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "641069773641",
+    "project_id": "agprop-todo-app",
+    "storage_bucket": "agprop-todo-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:641069773641:android:009f2c0d7d40b31b742098",
+        "android_client_info": {
+          "package_name": "com.nikki.todo.todo_firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDdYlCh3ZNbTuEOjVEB403Sr1OZclarWc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
