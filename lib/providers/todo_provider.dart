@@ -44,6 +44,7 @@ class TodoNotifier extends _$TodoNotifier {
         ],
       );
     } catch (e) {
+      /// Fail-safe to remove the todo from the list if it fails to add to the database
       if (e is FirebaseException) {
         final index = state.todos.indexOf(todo);
         if (index != -1) {
@@ -52,6 +53,8 @@ class TodoNotifier extends _$TodoNotifier {
           state = state.copyWith(todos: newTodos);
         }
       }
+
+      /// Custom Exception can be handled here
       rethrow;
     }
   }
@@ -70,6 +73,7 @@ class TodoNotifier extends _$TodoNotifier {
     try {
       _apiService.updateTodo(updatedTodo);
     } catch (e) {
+      /// Fail-safe to remove the todo from the list if it fails to add to the database
       if (e is FirebaseException) {
         final index = state.todos.indexOf(updatedTodo);
         if (index != -1) {

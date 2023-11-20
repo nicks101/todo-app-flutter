@@ -43,6 +43,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (updatedUser == null) return;
 
     try {
+      /// A loading state can be shown here
       ref.read(authNotifierProvider.notifier).updateUser(updatedUser).then((_) {
         _showSnackBar('Profile updated successfully');
       });
