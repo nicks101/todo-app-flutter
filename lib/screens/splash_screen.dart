@@ -32,7 +32,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     animationController.forward();
     animationController.addStatusListener(_animationListener);
 
-    if (_isLoggedIn()) Future.delayed(Duration.zero, _getAllTodos);
+    if (_isLoggedIn()) Future.delayed(Duration.zero, _getInitialData);
+  }
+
+  void _getInitialData() {
+    _getAllTodos();
+    _getUser();
+  }
+
+  void _getUser() {
+    ref.read(authNotifierProvider.notifier).getUser();
   }
 
   void _getAllTodos() async {

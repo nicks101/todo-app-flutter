@@ -4,6 +4,8 @@ import 'package:todo_firebase/screens/home/todo_list.dart';
 import 'package:todo_firebase/screens/profile/profile_screen.dart';
 import 'package:todo_firebase/utils/extensions.dart';
 
+import '../../widgets/user_avatar.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -23,12 +25,7 @@ class HomeScreen extends StatelessWidget {
                   routeName: context.routes.profile,
                 );
               },
-              child: CircleAvatar(
-                backgroundColor: context.color.transparentColor,
-                backgroundImage: const NetworkImage(
-                  'https://avatars.githubusercontent.com/u/139426?s=400&u=1f0d0c9b0a0e3b2a0e3b2a0e3b2a0e3b2a0e3b2a&v=4',
-                ),
-              ),
+              child: const UserAvatar(),
             ),
           ),
         ],

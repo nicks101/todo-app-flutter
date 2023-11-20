@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:todo_firebase/core/firebase/firebase_service.dart';
 import 'package:todo_firebase/models/user_model.dart';
@@ -5,6 +6,8 @@ import 'package:todo_firebase/models/user_model.dart';
 import '../core/firebase/firebase_auth_service.dart';
 
 part 'auth_provider.g.dart';
+
+final userProvider = StateProvider<UserModel?>((ref) => null);
 
 @Riverpod(keepAlive: true)
 class AuthNotifier extends _$AuthNotifier {
@@ -29,19 +32,32 @@ class AuthNotifier extends _$AuthNotifier {
 
   Future<void> syncUser() async {
     await addUser();
+    await getUser();
   }
 
   Future<void> getUser() async {
     final userId = _firebaseAuthService.currentUser?.uid;
     if (userId == null) return;
 
-    await _firebaseApiService.getUser(userId);
+    final user = await _firebaseApiService.getUser(userId);
+
+    if (user != null) {
+      ref.read(userProvider.notifier).update((state) => user);
+    }
   }
 
   Future<void> addUser() async {
     final user = _firebaseAuthService.currentUser;
     if (user == null) return;
     final newUser = UserModel.fromFirebaseUser(user);
-    await _firebaseApiService.addUser(newUser);
+    await _firebaseApiService.updateUser(
+      newUser.id,
+      newUser.fromFirebaseUserToMap(user),
+    );
+  }
+
+  Future<void> updateUser(UserModel user) async {
+    await _firebaseApiService.updateUser(user.id, user.toJson());
+    ref.read(userProvider.notifier).update((state) => user);
   }
 }

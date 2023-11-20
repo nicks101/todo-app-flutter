@@ -54,10 +54,10 @@ class FirebaseApiService {
     }
   }
 
-  Future<void> addUser(UserModel user) async {
+  Future<void> updateUser(String userId, Map<String, dynamic> user) async {
     try {
-      final docRef = _db.collection('users').doc(user.id);
-      await docRef.set(user.toJson(), SetOptions(merge: true));
+      final docRef = _db.collection('users').doc(userId);
+      await docRef.set(user, SetOptions(merge: true));
     } catch (e) {
       rethrow;
     }

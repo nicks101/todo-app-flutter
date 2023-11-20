@@ -19,4 +19,6 @@ extension BuildContextUtils on BuildContext {
   AppColors get color => isLightTheme ? LightThemeColors() : DarkThemeColors();
 
   AppTheme get appTheme => AppTheme();
+
+  AppConstants get constants => AppConstants();
 }
