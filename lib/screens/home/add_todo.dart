@@ -22,7 +22,7 @@ class _AddTodoState extends ConsumerState<AddTodo> {
   }
 
   void _addNewTodo() {
-    final value = ref.read(_todoDescriptionProvider);
+    final value = ref.read(_todoDescriptionProvider).trim();
     ref.read(todoNotifierProvider.notifier).add(value);
     FocusScope.of(context).unfocus();
     ref.read(_todoDescriptionProvider.notifier).update((_) => '');
